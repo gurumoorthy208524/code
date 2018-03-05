@@ -1,0 +1,132 @@
+#include <stdio.h>
+struct node{//node creation
+  long long int data;
+  struct node * right;
+  struct node * left;
+  long long int leftlimit;
+  long long int rightlimit;
+};
+struct node * createnode(long long int value)
+{
+  struct node * newnode=(struct node *)malloc(sizeof(struct node ));//allocate the memory
+  newnode->data=value;
+  newnode->right=NULL;
+  newnode->left=NULL;
+  return newnode;
+}
+struct node * builtTree(struct node * Root,long long int input[],long long int ss,long long int se)
+{//printf("%lld is start and %lld is end\n",ss,se);
+  if(ss==se)//Store the elements in the leaf node (Base condition)
+  {//printf("%lld is start and %lld is end at base condition\n",ss,se);
+    struct node * newnode=createnode(input[ss]);
+    newnode->leftlimit=ss;
+    newnode->rightlimit=se;
+    return newnode;//Return the created node address
+  }
+
+  if(Root==NULL)//if Root is 
+  {//printf("yes it is null\n");
+ 
+  
+  long long int mid=(ss+se)/2;
+ // printf("%lld is the mid\n",mid);
+  struct node *leftside=builtTree(NULL,input,ss,mid);
+  struct node *rightside=builtTree(NULL,input,mid+1,se);
+   struct node *curnode=createnode(leftside->data+rightside->data);
+   curnode->left=leftside;
+   curnode->right=rightside;
+   curnode->leftlimit=ss;
+   curnode->rightlimit=se;
+     return curnode;
+  }
+  else
+  {
+  long long int mid=(ss+se)/2;
+ // printf("%lld is the mid\n",mid);
+  struct node *leftside=builtTree(Root->left,input,ss,mid);
+  struct node *rightside=builtTree(Root->right,input,mid+1,se);
+   struct node *curnode=createnode(leftside->data+rightside->data);
+   curnode->left=leftside;
+   curnode->right=rightside;
+    curnode->leftlimit=ss;
+   curnode->rightlimit=se;
+  // printf("%lld is the data i am returning\n",curnode->data);
+  return curnode;
+  }
+  
+  
+}
+long long int query(struct node *Root,long long int ss,long long int se)
+{//printf("query function answer %lld %lld is leftlimit,rightlimit and %lld %lld ss se\n",Root->leftlimit,Root->rightlimit,ss,se);
+   if(Root==NULL)//if root is null
+    return 0;
+   
+     if(Root->rightlimit<ss||Root->leftlimit>se)//if the given index is out of node range return 0
+    {
+        return 0;
+    }
+     else if(Root->leftlimit>=ss&&Root->rightlimit<=se)//return the value if they are within the node range
+    {
+        return Root->data;
+    }
+    else{//if they overlap each other
+        return(query(Root->left,ss,se)+query(Root->right,ss,se));
+    }
+    
+}
+void update(struct node *Root,long long int index,long long int diff)
+{
+    if(Root==NULL)//base condition
+    return;
+    if(Root->leftlimit<=index&&Root->rightlimit>=index)//if index is between node range update the node value
+    {
+        Root->data=(Root->data)+diff;
+       // printf("%lld is updated data and %lld is diff\n",Root->data,diff);
+        update(Root->left,index,diff);
+        update(Root->right,index,diff);
+    }
+    else if(index<Root->leftlimit||index>Root->rightlimit)//no recursion on that side
+    {
+        return;
+    }
+    else//if they overlap each over try both the direction and update the curent node value
+    {
+        Root->data=Root->data+diff;
+        update(Root->left,index,diff);
+        update(Root->right,index,diff);
+    }
+}
+void inorder(struct node * traverse)//just to check the tree
+{
+  if(traverse!=NULL)
+  {
+    inorder(traverse->left);
+    printf("%d is the data and %lld is leftlimit and %lld is rightlimit\n",traverse->data,traverse->leftlimit,traverse->rightlimit);
+    inorder(traverse->right);
+  }
+}
+int main(void) {
+  struct node * Root=NULL;
+  long long int i,n;
+  scanf("%lld",&n);//Read the size from the user
+  long long int input[n];//create the array of size n
+  for(i=0;i<n;i++)
+  scanf("%lld",&input[i]);//Read the array from the user
+  Root=builtTree(Root,input,0,n-1);//Buit the segment tree
+  printf("%lld is root data\n",Root->data);
+  inorder(Root);
+  printf("Enter your query range\n");
+  long long int ii,jj;
+  scanf("%lld %lld",&ii,&jj);
+  printf("%lld is the query answer\n",query(Root,ii,jj));//query function to find the answer
+  printf("Enter the index to update\n");//update
+  long long int index;
+  scanf("%lld",&index);
+  long long int update_value;
+  scanf("%lld",&update_value);
+  long long int diff=abs(input[index]-update_value);//find the difference
+  update(Root,index,diff);//update function
+  inorder(Root);//to check the update funcion
+  
+  return 0;
+}
