@@ -1,0 +1,33 @@
+stack=[]
+#print all possible paths form given source to destination
+def dfs(Matrix,s,visited,d):
+    visited[s]=1
+    stack.append(s)#append each vertex to the stack
+    print("dfs call",stack)
+    if s==d:
+        visited[d]=0# set the destination as unvisited
+        print("path is ",stack)
+        stack.pop()
+        return# return 
+        
+    for i in range(0,len(Matrix[0])):
+        if visited[i]==0 and Matrix[s][i]!=0:
+            visited[i]=1
+           # print("loop call",i)
+            dfs(Matrix,i,visited,d)# call the next vertex
+    print("all work finished for",s,"stack is",stack)
+    stack.pop() # remove the vertex if all of its adjancent vertex has been visited
+    return
+    
+n,m=list(map(int,(input().strip().split(" "))))#number of vertexs
+Matrix=[]
+visited=[]
+print(n,m)
+for i in range(0,n):
+    temp=list(map(int,input().strip().split(" ")))
+    Matrix.append(temp# adjancent matrix
+    visited.append(0)
+visited[0]=1
+print(Matrix)
+s,d=list(map(int,input().strip().split(" ")))#source and destination
+dfs(Matrix,s,visited,d)#dfs call
