@@ -1,0 +1,15 @@
+def seive_prime(n):
+    prime=[]
+    for i in range(0,n+1):
+        prime.append(1)# set all the numbers as prime..
+    for i in range(2,n+1):# check each number
+        if prime[i]==1:#  the number is prime
+            for j in  range(i*2,n+1,i):#change all its multiples to non-prime
+            
+                prime[j]=0
+           
+    for i in range(1,n+1):
+        if prime[i]==1: # check whether prime  
+            print("prime number is",i)
+n=int(input())
+seive_prime(n)
